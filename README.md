@@ -9,7 +9,7 @@ there:
 
 `scp vpn.slax user@device:/var/db/scripts/op/`
 
-Once it is uploaded, you can run the following command from *operational* mode:
+Once it is uploaded, you can run the following command from _*operational*_ mode:
 
 `op url /var/db/scripts/op/vpn.slax`
 
@@ -17,7 +17,7 @@ You can also enter in the following configuration:
 
 `set system scripts op file vpn.slax`
 
-...then you can just run `op vpn` from operational mode.
+...then you can just run `op vpn` from _*operational*_ mode.
 
 Another way is to run the script remotely, calling it via ftp, sftp, or scp. The latter two are preferred:
 
