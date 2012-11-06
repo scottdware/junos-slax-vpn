@@ -19,6 +19,6 @@ You can also enter in the following configuration:
 
 ...then you can just run `op vpn` from _*operational*_ mode.
 
-Another way is to run the script remotely, calling it via ftp, sftp, or scp. The latter two are preferred:
+Another way is to run the script remotely, calling it via sftp, ftp, etc.
 
 `op url scp://user:password@device/path/to/vpn.slax`
