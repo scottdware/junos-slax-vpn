@@ -1,8 +1,8 @@
 /*
 * Author:           Scott Ware <scottdware@gmail.com>
 * Title:            vpn.slax
-* Description:      A simple script that displays the current active IPSec VPN
-*                   tunnels.
+* Description:      This is a simple SLAX script that when run, will display the current,
+*                   active IPSec VPN tunnels on the device tunnels.
 */
 version 1.0;
 
