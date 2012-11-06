@@ -1,6 +1,6 @@
 # junos-vpn #
 
-This is a simple [1]SLAX script that when run, will display the current, active IPSec VPN tunnels on the device.
+This is a simple SLAX script that when run, will display the current, active IPSec VPN tunnels on the device.
 
 ## Usage ##
 
@@ -22,5 +22,3 @@ You can also enter in the following configuration:
 Another way is to run the script remotely, calling it via ftp, sftp, or scp. The latter two are preferred:
 
 `op url scp://user:password@device/path/to/vpn.slax`
-
-[1]http://code.googlecode.com/p/libslax
