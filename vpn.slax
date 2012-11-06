@@ -1,0 +1,36 @@
+/*
+* Author:           Scott Ware <scottdware@gmail.com>
+* Title:            vpn.slax
+* Description:      A simple script that displays the current active IPSec VPN
+*                   tunnels.
+*/
+version 1.0;
+
+ns junos = "http://xml.juniper.net/junos/*/junos";
+ns xnm = "http://xml.juniper.net/xnm/1.1/xnm";
+ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0";
+
+import "../import/junos.xsl";
+
+match / {
+    <op-script-results> {
+        var $show-sec-ike-sa := {
+            <get-ike-security-associations-information>;
+        }
+        var $get-sec-ike-sa = jcs:invoke($show-sec-ike-sa);
+        var $tunnels = count($get-sec-ike-sa//ike-security-associations);
+
+        expr jcs:output("Host\t\t\tTunnel State\tIndex\n");
+        expr jcs:output("--------------------------------------------------\n");
+
+        if ($tunnels <= 0) {
+            expr "No active IPSec VPN tunnels!\n";
+        }
+        else {
+            for-each ($get-sec-ike-sa//ike-security-associations) {
+                <output> ike-sa-remote-address _ "\t\t" _ ike-sa-state _ "\t\t" _ ike-sa-index;
+            }
+        }
+    }
+}
+
