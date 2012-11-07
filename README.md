@@ -21,4 +21,4 @@ You can also enter in the following configuration:
 
 Another way is to run the script remotely, calling it via sftp, ftp, etc.
 
-`op url scp://user:password@device/path/to/vpn.slax`
+`op url sftp://user:password@device/path/to/vpn.slax`
