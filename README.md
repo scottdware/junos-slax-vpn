@@ -4,8 +4,6 @@ This is a simple [SLAX][1] script that when run, will display the current, activ
 
 ## Usage ##
 
-There are few ways that you can run this script:
-
 * Copy/upload the file to the device:
     `scp vpn.slax user@device:/var/db/scripts/op/`
 
