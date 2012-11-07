@@ -4,23 +4,18 @@ This is a simple [SLAX][1] script that when run, will display the current, activ
 
 ## Usage ##
 
-There are few ways that you can run this script. One option is to upload it to the device, and run it from
-there:
+There are few ways that you can run this script:
 
-`scp vpn.slax user@device:/var/db/scripts/op/`
+* Copy/upload the file to the device:
+    `scp vpn.slax user@device:/var/db/scripts/op/`
 
-Once it is uploaded, you can run the following command from _*operational*_ mode:
+* Run the script from the local file system, in *_operational_* mode:
+    `op url /var/db/scripts/op/vpn.slax`
 
-`op url /var/db/scripts/op/vpn.slax`
+* Configure the script so it can be run by using it's name:
+    `set system scripts op file vpn.slax`
 
-You can also enter in the following configuration:
-
-`set system scripts op file vpn.slax`
-
-...then you can just run `op vpn` from _*operational*_ mode.
-
-Another way is to run the script remotely, calling it via sftp, ftp, etc.
-
-`op url sftp://user:password@device/path/to/vpn.slax`
+    Then in *_operationa_* mode, run:
+    `op vpn`
 
 [1]: http://code.google.com/p/libslax   "SLAX"
