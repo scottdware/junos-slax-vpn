@@ -19,4 +19,15 @@ This is a simple [SLAX][1] script that when run, will display the current, activ
     Then in *_operationa_* mode, run:
     `op vpn`
 
+## Results ##
+
+When you run the script, you will get output similar to the following:
+
+    Host                    Tunnel State    Index
+    --------------------------------------------------
+    5.5.5.1                 UP              1111222
+    6.5.5.2                 UP              1111223
+    7.5.5.3                 UP              1111224
+
+
 [1]: http://code.google.com/p/libslax   "SLAX"
