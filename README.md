@@ -16,7 +16,7 @@ This is a simple [SLAX][1] script that when run, will display the current, activ
 
     `set system scripts op file vpn.slax`
 
-    Then in *_operationa_* mode, run:
+    Then in *_operational_* mode, run:
     `op vpn`
 
 ## Results ##
