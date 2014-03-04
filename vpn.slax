@@ -57,18 +57,20 @@ match / {
                 for-each($config/security/ike/gateway[name = $choice]) {
                     var $peer-name = name/text();
                     var $peer-address = address/text();
-                    
-                    for-each($ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]) {
-                        var $index = ike-sa-index/text();
-                        var $state = ike-sa-state/text();
-                        var $ike-mode = ike-sa-exchange-type/text();
-                    }
-                    
+                    var $index = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-index;
+                    var $state = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-state;
+                    var $ike-mode = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-exchange-type;
+                    var $init-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-initiator-cookie;
+                    var $resp-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-responder-cookie;
                     var $tunnels = count($ipsec-sa//ipsec-security-associations[sa-remote-gateway = $peer-address]);
-                    var $header-text = "Name: " _ $peer-name _ ", Peer: " _ $peer-address _ ", Total SA: " _ $tunnels;
                     
                     expr jcs:output("\n--------------------------------------------------------------------------");
-                    expr jcs:output(jcs:printf("%-60s", $header-text));
+                    expr jcs:output(jcs:printf("%-20s %-21s", "Name:", $peer-name));
+                    expr jcs:output(jcs:printf("%-20s %-21s", "Peer Address:", $peer-address));
+                    expr jcs:output(jcs:printf("%-20s %-21s", "Mode:", $ike-mode));
+                    expr jcs:output(jcs:printf("%-20s %-21s", "Initiator Cookie:", $init-cookie));
+                    expr jcs:output(jcs:printf("%-20s %-21s", "Responder Cookie:", $resp-cookie));
+                    expr jcs:output(jcs:printf("%-20s %-21s", "Number of SA's:", $tunnels));
                     expr jcs:output("--------------------------------------------------------------------------");
                     expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", "Flow", "SPI", "Index", "Life", "Port", "Encryption"));
                     expr jcs:output("--------------------------------------------------------------------------");
@@ -96,18 +98,20 @@ match / {
             for-each($config/security/ike/gateway[name = $tunnel]) {
                 var $peer-name = name/text();
                 var $peer-address = address/text();
-                
-                for-each($ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]) {
-                    var $index = ike-sa-index/text();
-                    var $state = ike-sa-state/text();
-                    var $ike-mode = ike-sa-exchange-type/text();
-                }
-                
+                var $index = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-index;
+                var $state = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-state;
+                var $ike-mode = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-exchange-type;
+                var $init-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-initiator-cookie;
+                var $resp-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-responder-cookie;
                 var $tunnels = count($ipsec-sa//ipsec-security-associations[sa-remote-gateway = $peer-address]);
-                var $header-text = "Name: " _ $peer-name _ ", Peer: " _ $peer-address _ ", Total SA: " _ $tunnels;
                 
                 expr jcs:output("\n--------------------------------------------------------------------------");
-                expr jcs:output(jcs:printf("%-60s", $header-text));
+                expr jcs:output(jcs:printf("%-20s %-21s", "Name:", $peer-name));
+                expr jcs:output(jcs:printf("%-20s %-21s", "Peer Address:", $peer-address));
+                expr jcs:output(jcs:printf("%-20s %-21s", "Mode:", $ike-mode));
+                expr jcs:output(jcs:printf("%-20s %-21s", "Initiator Cookie:", $init-cookie));
+                expr jcs:output(jcs:printf("%-20s %-21s", "Responder Cookie:", $resp-cookie));
+                expr jcs:output(jcs:printf("%-20s %-21s", "Number of SA's:", $tunnels));
                 expr jcs:output("--------------------------------------------------------------------------");
                 expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", "Flow", "SPI", "Index", "Life", "Port", "Encryption"));
                 expr jcs:output("--------------------------------------------------------------------------");
