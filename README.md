@@ -54,7 +54,12 @@ When run with the name of a VPN, you get the following:
 admin@vpn-firewall> op vpn tunnel Vendor-ABC
 
 --------------------------------------------------------------------------
-Name: Vendor-ABC, Peer: 2.2.2.10, Total SA: 10
+Name:                Vendor-ABC
+Peer Address:        2.2.2.10
+Mode:                main
+Initiator Cookie:    93c1c6f551011dke
+Responder Cookie:    c58ba44563da9a1a
+Number of SA's:      10
 --------------------------------------------------------------------------
 Flow      |SPI       |Index     |Life      |Port      |Encryption
 --------------------------------------------------------------------------
