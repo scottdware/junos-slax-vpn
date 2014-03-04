@@ -71,4 +71,4 @@ Flow      |SPI       |Index     |Life      |Port      |Encryption
 --------------------------------------------------------------------------
 ```
 
-[1]: http://code.google.com/p/libslax   "SLAX"
+[1]: http://techwiki.juniper.net/Automation_Scripting/Scripts_by_Languages/SLAX "SLAX"
