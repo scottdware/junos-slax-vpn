@@ -31,9 +31,7 @@ match / {
         var $ipsec-sa = jcs:invoke('get-security-associations-information');
 
         if (jcs:empty($tunnel)) {
-            <xnm:warning> {
-                <message> "Your syntax should be \"op vpn tunnel list\" or the name of a VPN in place of \"list\"!";
-            }
+            <xsl:message terminate="yes"> "Your syntax should be \"op vpn tunnel list\" or the name of a VPN in place of \"list\"!";
         }
 
         else {
@@ -95,7 +93,7 @@ match / {
     var $init-cookie = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-initiator-cookie;
     var $resp-cookie = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-responder-cookie;
     var $tunnels = count($ipsec//ipsec-security-associations[sa-remote-gateway = $vpn-ip]);
-
+    
     expr jcs:output("\n--------------------------------------------------------------------------");
     expr jcs:output(jcs:printf("%-20s %-21s", "Name:", $vpn-name));
     expr jcs:output(jcs:printf("%-20s %-21s", "Peer Address:", $vpn-ip));
