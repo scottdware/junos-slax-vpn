@@ -10,6 +10,7 @@ ns junos = "http://xml.juniper.net/junos/*/junos";
 ns xnm = "http://xml.juniper.net/xnm/1.1/xnm";
 ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0";
 ns func extension = "http://exslt.org/functions";
+ns my = "http://xml.juniper.net/my";
 
 import "../import/junos.xsl";
 
@@ -29,109 +30,96 @@ match / {
         var $ike-sa = jcs:invoke('get-ike-security-associations-information');
         var $ipsec-sa = jcs:invoke('get-security-associations-information');
 
-        if ($tunnel = "list") {
-            expr jcs:output(jcs:printf("%-25s %-26s", "Name", "Status"));
-            expr jcs:output("--------------------------------------------------------------------------");
-            
-            for-each($config/security/ike/gateway) {
-                var $peer-name = name/text();
-                var $peer-address = address/text();
-                
-                for-each($ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]) {
-                    var $index = ike-sa-index/text();
-                    var $state = ike-sa-state/text();
-                    var $ike-mode = ike-sa-exchange-type/text();
-                    
-                    expr jcs:output(jcs:printf("%-25s %s", $peer-name, $state));
-                }
-            }
-            
-            expr jcs:output("\n");
-            var $choice = jcs:get-input("Enter Name or \"q\" to quit: ");
-
-            if ($choice = "q") {
-                expr jcs:output("");
-            }
-            
-            else {
-                for-each($config/security/ike/gateway[name = $choice]) {
-                    var $peer-name = name/text();
-                    var $peer-address = address/text();
-                    var $index = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-index;
-                    var $state = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-state;
-                    var $ike-mode = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-exchange-type;
-                    var $init-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-initiator-cookie;
-                    var $resp-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-responder-cookie;
-                    var $tunnels = count($ipsec-sa//ipsec-security-associations[sa-remote-gateway = $peer-address]);
-                    
-                    expr jcs:output("\n--------------------------------------------------------------------------");
-                    expr jcs:output(jcs:printf("%-20s %-21s", "Name:", $peer-name));
-                    expr jcs:output(jcs:printf("%-20s %-21s", "Peer Address:", $peer-address));
-                    expr jcs:output(jcs:printf("%-20s %-21s", "Mode:", $ike-mode));
-                    expr jcs:output(jcs:printf("%-20s %-21s", "Initiator Cookie:", $init-cookie));
-                    expr jcs:output(jcs:printf("%-20s %-21s", "Responder Cookie:", $resp-cookie));
-                    expr jcs:output(jcs:printf("%-20s %-21s", "Number of SA's:", $tunnels));
-                    expr jcs:output("--------------------------------------------------------------------------");
-                    expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", "Flow", "SPI", "Index", "Life", "Port", "Encryption"));
-                    expr jcs:output("--------------------------------------------------------------------------");
-                    for-each($ipsec-sa//ipsec-security-associations[sa-remote-gateway = $peer-address]) {
-                        var $sa-direction = sa-direction/text();
-                        var $sa-spi = sa-spi/text();
-                        var $sa-tunnel-index = sa-tunnel-index/text();
-                        var $sa-lifesize = sa-lifesize-remaining/text();
-                        var $sa-port = sa-port/text();
-                        var $sa-monitor = sa-vpn-monitoring-state/text();
-                        var $sa-protocol = sa-protocol/text();
-                        var $sa-esp = sa-esp-encryption-algorithm/text();
-                        var $sa-hmac = sa-hmac-algorithm/text();
-                        var $encryption = $sa-protocol _ "" _ $sa-esp _ "" _ $sa-hmac;
-                        
-                        expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", $sa-direction, $sa-spi, $sa-tunnel-index, $sa-lifesize, $sa-port, $encryption));
-                    }
-                    
-                    expr jcs:output("--------------------------------------------------------------------------");
-                }
+        if (jcs:empty($tunnel)) {
+            <xnm:warning> {
+                <message> "Your syntax should be \"op vpn tunnel list\" or the name of a VPN in place of \"list\"!";
             }
         }
-        
+
         else {
-            for-each($config/security/ike/gateway[name = $tunnel]) {
-                var $peer-name = name/text();
-                var $peer-address = address/text();
-                var $index = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-index;
-                var $state = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-state;
-                var $ike-mode = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-exchange-type;
-                var $init-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-initiator-cookie;
-                var $resp-cookie = $ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]/ike-sa-responder-cookie;
-                var $tunnels = count($ipsec-sa//ipsec-security-associations[sa-remote-gateway = $peer-address]);
-                
-                expr jcs:output("\n--------------------------------------------------------------------------");
-                expr jcs:output(jcs:printf("%-20s %-21s", "Name:", $peer-name));
-                expr jcs:output(jcs:printf("%-20s %-21s", "Peer Address:", $peer-address));
-                expr jcs:output(jcs:printf("%-20s %-21s", "Mode:", $ike-mode));
-                expr jcs:output(jcs:printf("%-20s %-21s", "Initiator Cookie:", $init-cookie));
-                expr jcs:output(jcs:printf("%-20s %-21s", "Responder Cookie:", $resp-cookie));
-                expr jcs:output(jcs:printf("%-20s %-21s", "Number of SA's:", $tunnels));
+            if ($tunnel = "list") {
+                expr jcs:output(jcs:printf("%-25s %-26s", "Name", "Status"));
                 expr jcs:output("--------------------------------------------------------------------------");
-                expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", "Flow", "SPI", "Index", "Life", "Port", "Encryption"));
-                expr jcs:output("--------------------------------------------------------------------------");
-                for-each($ipsec-sa//ipsec-security-associations[sa-remote-gateway = $peer-address]) {
-                    var $sa-direction = sa-direction/text();
-                    var $sa-spi = sa-spi/text();
-                    var $sa-tunnel-index = sa-tunnel-index/text();
-                    var $sa-lifesize = sa-lifesize-remaining/text();
-                    var $sa-port = sa-port/text();
-                    var $sa-monitor = sa-vpn-monitoring-state/text();
-                    var $sa-protocol = sa-protocol/text();
-                    var $sa-esp = sa-esp-encryption-algorithm/text();
-                    var $sa-hmac = sa-hmac-algorithm/text();
-                    var $encryption = $sa-protocol _ "" _ $sa-esp _ "" _ $sa-hmac;
-                    
-                    expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", $sa-direction, $sa-spi, $sa-tunnel-index, $sa-lifesize, $sa-port, $encryption));
+
+                for-each($config/security/ike/gateway) {
+                    var $peer-name = name/text();
+                    var $peer-address = address/text();
+
+                    for-each($ike-sa//ike-security-associations[ike-sa-remote-address = $peer-address]) {
+                        var $index = ike-sa-index/text();
+                        var $state = ike-sa-state/text();
+                        var $ike-mode = ike-sa-exchange-type/text();
+
+                        expr jcs:output(jcs:printf("%-25s %s", $peer-name, $state));
+                    }
                 }
-                
-                expr jcs:output("--------------------------------------------------------------------------");
+
+                expr jcs:output("\n");
+                var $choice = jcs:get-input("Enter Name or \"q\" to quit: ");
+
+                if ($choice = "q") {
+                    expr jcs:output("");
+                }
+
+                else {
+                    for-each($config/security/ike/gateway[name = $choice]) {
+                        var $peer-name = name/text();
+                        var $peer-address = address/text();
+
+                        expr my:vpn-info($ike-sa, $ipsec-sa, $peer-name, $peer-address);
+                    }
+                }
+            }
+
+            else {
+                for-each($config/security/ike/gateway[name = $tunnel]) {
+                    var $peer-name = name/text();
+                    var $peer-address = address/text();
+
+                    expr my:vpn-info($ike-sa, $ipsec-sa, $peer-name, $peer-address);
+                }
             }
         }
     }
+}
+
+<func:function name="my:vpn-info"> {
+    param $ike;
+    param $ipsec;
+    param $vpn-name;
+    param $vpn-ip;
+
+    var $index = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-index;
+    var $state = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-state;
+    var $ike-mode = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-exchange-type;
+    var $init-cookie = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-initiator-cookie;
+    var $resp-cookie = $ike//ike-security-associations[ike-sa-remote-address = $vpn-ip]/ike-sa-responder-cookie;
+    var $tunnels = count($ipsec//ipsec-security-associations[sa-remote-gateway = $vpn-ip]);
+
+    expr jcs:output("\n--------------------------------------------------------------------------");
+    expr jcs:output(jcs:printf("%-20s %-21s", "Name:", $vpn-name));
+    expr jcs:output(jcs:printf("%-20s %-21s", "Peer Address:", $vpn-ip));
+    expr jcs:output(jcs:printf("%-20s %-21s", "Mode:", $ike-mode));
+    expr jcs:output(jcs:printf("%-20s %-21s", "Initiator Cookie:", $init-cookie));
+    expr jcs:output(jcs:printf("%-20s %-21s", "Responder Cookie:", $resp-cookie));
+    expr jcs:output(jcs:printf("%-20s %-21s", "Number of SA's:", $tunnels));
+    expr jcs:output("--------------------------------------------------------------------------");
+    expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", "Flow", "SPI", "Index", "Life", "Port", "Encryption"));
+    expr jcs:output("--------------------------------------------------------------------------");
+    for-each($ipsec//ipsec-security-associations[sa-remote-gateway = $vpn-ip]) {
+        var $sa-direction = sa-direction/text();
+        var $sa-spi = sa-spi/text();
+        var $sa-tunnel-index = sa-tunnel-index/text();
+        var $sa-lifesize = sa-lifesize-remaining/text();
+        var $sa-port = sa-port/text();
+        var $sa-monitor = sa-vpn-monitoring-state/text();
+        var $sa-protocol = sa-protocol/text();
+        var $sa-esp = sa-esp-encryption-algorithm/text();
+        var $sa-hmac = sa-hmac-algorithm/text();
+        var $encryption = $sa-protocol _ "" _ $sa-esp _ "" _ $sa-hmac;
+
+        expr jcs:output(jcs:printf("%-10s|%-10s|%-10s|%-10s|%-10s|%-10s", $sa-direction, $sa-spi, $sa-tunnel-index, $sa-lifesize, $sa-port, $encryption));
+    }
+
+    expr jcs:output("--------------------------------------------------------------------------");
 }
